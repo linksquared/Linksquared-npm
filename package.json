@@ -15,6 +15,7 @@
   "author": "linksquared",
   "license": "MIT",
   "devDependencies": {
+    "copy-webpack-plugin": "^12.0.2",
     "webpack": "^5.0.0",
     "webpack-cli": "^4.0.0",
     "webpack-dev-server": "^4.0.0"

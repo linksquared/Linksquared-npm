@@ -1,4 +1,5 @@
 const path = require("path");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   mode: "development",
@@ -17,4 +18,14 @@ module.exports = {
     compress: true,
     port: 9000,
   },
+  plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "src/html/messages_list.html"),
+          to: path.resolve(__dirname, "dist/html/messages_list.html"),
+        },
+      ],
+    }),
+  ],
 };

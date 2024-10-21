@@ -2,6 +2,7 @@ import LinksquaredAPIService from "./linksquared_api_service.js";
 import LinksquaredEventsManager from "./linksquared_events_manager.js";
 import LinksquaredContext from "./linksquared_context.js";
 import LinksquaredDeviceDetails from "./linksquared_device_details.js";
+import LinksquaredUIHelper from "./linksquared_ui_helper.js";
 
 /**
  * Manages interactions with the Linksquared API and event handling.
@@ -20,6 +21,7 @@ class LinksquaredManager {
     this.eventsManager = new LinksquaredEventsManager();
     this.authenticated = false;
     this.shouldUpdateIdentifiers = false;
+    this.uiHelper = new LinksquaredUIHelper();
   }
 
   // MARK: Methods
@@ -27,7 +29,7 @@ class LinksquaredManager {
   /**
    * Authenticates with the Linksquared API.
    */
-  authenticate() {
+  authenticate(succesfullAuthenticatedCallback) {
     let details = LinksquaredDeviceDetails.currentDetails();
 
     const self = this;
@@ -51,6 +53,9 @@ class LinksquaredManager {
 
         self.authenticated = true;
 
+        if (succesfullAuthenticatedCallback) {
+          succesfullAuthenticatedCallback();
+        }
         self.#handleFetchData();
         self.#updateUserAttributesIfNeeded();
         self.eventsManager.flushEvents();
@@ -147,7 +152,33 @@ class LinksquaredManager {
     );
   }
 
+  showMessagesList() {
+    this.uiHelper.showMessagesList();
+  }
+
+  getMessages(page, response, error) {
+    this.service.messagesForDevice(page, response, error);
+  }
+
+  getNumberOfUnreadMessages(response, error) {
+    this.service.numberOfUnreadMessages(response, error);
+  }
+
   // MARK: Private
+
+  #displayAutomaticMessages() {
+    this.service.messagesForAutomaticDisplay(
+      (response) => {
+        const notifications = response.notifications;
+        notifications.forEach((item) => {
+          this.uiHelper.openPage(item);
+        });
+      },
+      (error) => {
+        console.log("Linksquared -- could not get automatic notifications!");
+      }
+    );
+  }
 
   /**
    * Handles fetching data from Linksquared API.
@@ -161,6 +192,8 @@ class LinksquaredManager {
     } else {
       this.#handleDataForDevice();
     }
+
+    this.#displayAutomaticMessages();
   }
 
   /**

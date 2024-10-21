@@ -17,8 +17,8 @@ class Linksquared {
   /**
    * Starts the Linksquared SDK by authenticating with the API.
    */
-  start() {
-    this.manager.authenticate();
+  start(succesfullAuthenticatedCallback = null) {
+    this.manager.authenticate(succesfullAuthenticatedCallback);
   }
 
   /**
@@ -78,6 +78,18 @@ class Linksquared {
    */
   authenticated() {
     return this.manager.authenticated;
+  }
+
+  showMessagesList() {
+    this.manager.showMessagesList();
+  }
+
+  getMessages(page, response, error) {
+    this.manager.getMessages(page, response, error);
+  }
+
+  getNumberOfUnreadMessages(response, error) {
+    this.manager.getNumberOfUnreadMessages(response, error);
   }
 }
 

@@ -7,12 +7,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Library Example</title>
   </head>
+  <style>
+    body {
+      background-color: white;
+    }
+  </style>
   <body>
     <script src="/dist/Linksquared.js"></script>
 
     <script>
-      // Call the greet function from your library
-      console.log(Linksquared.greet("World")); // Output: Hello, World!
+      const APIKey =
+        "emotii_70530f011b3e085ef845993963f41570824b9e7f7ad9dd2f76b295f1e9385f70";
+
+      const sdk = new Linksquared.default(APIKey, (data) => {
+        console.log("Link data:", data); // Callback to handle data from Linksquared
+      });
+
+      // Start the SDK
+      sdk.start(() => {
+        sdk.showMessagesList();
+      });
+
+      sdk.setUserIdentifier("YOUR_USER_ID");
+      sdk.setUserAttributes({ KEY: "VALUE" });
+
+      function setUserDetails() {
+        // sdk.getNumberOfUnreadMessages(
+        //   (response) => {
+        //     console.log(response);
+        //   },
+        //   (error) => {
+        //     console.log("Linksquared -- getNumberOfUnreadMessages!");
+        //   }
+        // );
+        // sdk.getMessages(
+        //   1,
+        //   (response) => {
+        //     console.log(response);
+        //   },
+        //   (error) => {
+        //     console.log("Linksquared -- getNumberOfUnreadMessages!");
+        //   }
+        // );
+      }
+
+      // Execute setUserDetails after 2 seconds
+      setTimeout(setUserDetails, 2000);
+
+      // sdk.showMessagesList();
+      //
+
+      // // Create a test link
+      // sdk.createLink(
+      //   "Test Title",
+      //   "Test Subtitle",
+      //   "https://example.com/image.jpg",
+      //   { additionalData: "test" },
+      //   (successData) => {
+      //     console.log("Link created successfully:", successData);
+      //   },
+      //   (errorData) => {
+      //     console.error("Error creating link:", errorData);
+      //   }
+      // );
+
+      // Set the user attributes
     </script>
+    test test test
   </body>
 </html>

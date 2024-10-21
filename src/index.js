@@ -1,5 +1,3 @@
-// Import the Linksquared class from linksquared.js
-import Linksquared from "./linksquared.js";
+import Linksquared from "./linksquared.js"; // Assuming your class is in linksquared.js
 
-// Re-export the Linksquared class to make it available to users of your library
-export default Linksquared;
+export default Linksquared; // Ensure this line correctly exports the class

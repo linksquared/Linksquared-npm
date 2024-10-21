@@ -5,7 +5,8 @@ import LinksquaredContext from "./linksquared_context";
  */
 class LinksquaredAPIServiceHelper {
   // Endpoint URL for the Linksquared API
-  static ENDPOINT = "https://sdk.sqd.link/api/v1/sdk";
+  // static ENDPOINT = "https://sdk.sqd.link/api/v1/sdk";
+  static ENDPOINT = "http://sdk.lvh.me:3000/api/v1/sdk";
 
   /**
    * Constructor for LinksquaredAPIServiceHelper.
@@ -28,6 +29,32 @@ class LinksquaredAPIServiceHelper {
 
     const xhr = new XMLHttpRequest();
     xhr.open("POST", endpoint, true);
+
+    // Set request headers
+    for (const key in headers) {
+      xhr.setRequestHeader(key, headers[key]);
+    }
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const response = xhr.responseText;
+          success(JSON.parse(response));
+        } else {
+          error(xhr.statusText);
+        }
+      }
+    };
+
+    xhr.send(JSON.stringify(data));
+  }
+
+  GET(path, data, success, error) {
+    const headers = this.buildHeaders();
+    const endpoint = LinksquaredAPIServiceHelper.ENDPOINT + path;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", endpoint, true);
 
     // Set request headers
     for (const key in headers) {
