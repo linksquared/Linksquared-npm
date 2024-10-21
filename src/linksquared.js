@@ -16,6 +16,8 @@ class Linksquared {
 
   /**
    * Starts the Linksquared SDK by authenticating with the API.
+   * Optionally takes a callback that is called upon successful authentication.
+   * @param {Function} [succesfullAuthenticatedCallback=null] - Callback to invoke on successful authentication.
    */
   start(succesfullAuthenticatedCallback = null) {
     this.manager.authenticate(succesfullAuthenticatedCallback);
@@ -79,15 +81,32 @@ class Linksquared {
   authenticated() {
     return this.manager.authenticated;
   }
-
+  /**
+   * Displays the messages list using the manager.
+   * This method triggers the display of the messages list in the UI.
+   * @returns {void}
+   */
   showMessagesList() {
     this.manager.showMessagesList();
   }
 
+  /**
+   * Retrieves messages for a specific page using the manager.
+   * @param {number} page - The page number to retrieve messages from.
+   * @param {Function} response - Callback to handle the retrieved messages.
+   * @param {Function} error - Callback to handle any errors during retrieval.
+   * @returns {void}
+   */
   getMessages(page, response, error) {
     this.manager.getMessages(page, response, error);
   }
 
+  /**
+   * Retrieves the number of unread messages using the manager.
+   * @param {Function} response - Callback to handle the count of unread messages.
+   * @param {Function} error - Callback to handle any errors during retrieval.
+   * @returns {void}
+   */
   getNumberOfUnreadMessages(response, error) {
     this.manager.getNumberOfUnreadMessages(response, error);
   }
