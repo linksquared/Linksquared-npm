@@ -50,6 +50,8 @@ const linksquared = new Linksquared(APIKey, handleLinkData);
 
 Initializes and starts the Linksquared SDK by authenticating with the provided API key.
 
+- **succesfullAuthenticatedCallback** (Function, optional): Callback to invoke on successful authentication.
+
 #### Example
 
 ```javascript
@@ -155,6 +157,58 @@ Checks if the SDK is currently authenticated.
 ```javascript
 const isAuthenticated = linksquared.authenticated();
 console.log("Is authenticated:", isAuthenticated);
+```
+
+### showMessagesList()
+
+Displays the messages list using the manager.
+
+#### Example
+
+```javascript
+linksquared.showMessagesList();
+```
+
+### getMessages(page, response, error)
+
+Retrieves messages for a specific page using the manager.
+
+- **page** (number): The page number to retrieve messages from.
+- **response** (Function): Callback to handle the retrieved messages.
+- **error** (Function): Callback to handle any errors during retrieval.
+
+#### Example
+
+```javascript
+linksquared.getMessages(
+  1,
+  (messages) => {
+    console.log("Retrieved messages:", messages);
+  },
+  (err) => {
+    console.error("Error retrieving messages:", err);
+  }
+);
+```
+
+### getNumberOfUnreadMessages(response, error)
+
+Retrieves the number of unread messages using the manager.
+
+- **response** (Function): Callback to handle the count of unread messages.
+- **error** (Function): Callback to handle any errors during retrieval.
+
+#### Example
+
+```javascript
+linksquared.getNumberOfUnreadMessages(
+  (count) => {
+    console.log("Number of unread messages:", count);
+  },
+  (err) => {
+    console.error("Error retrieving unread messages count:", err);
+  }
+);
 ```
 
 ## Usage Example
