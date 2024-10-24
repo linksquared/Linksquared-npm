@@ -8,10 +8,16 @@ class Linksquared {
   /**
    * Creates an instance of the Linksquared SDK.
    * @param {string} APIKey - The API key for authentication.
+   * @param {boolean} testEnvironment - Indicates if the environment is a test environment.
    * @param {Function} linkHandlingCallback - Callback function to handle Linksquared data.
    */
-  constructor(APIKey, linkHandlingCallback) {
-    this.manager = new LinksquaredManager(APIKey, linkHandlingCallback);
+  constructor(APIKey, testEnvironment, linkHandlingCallback) {
+    // Initialize the LinksquaredManager with the provided API key and callback
+    this.manager = new LinksquaredManager(
+      APIKey,
+      testEnvironment,
+      linkHandlingCallback
+    );
   }
 
   /**
@@ -20,6 +26,7 @@ class Linksquared {
    * @param {Function} [succesfullAuthenticatedCallback=null] - Callback to invoke on successful authentication.
    */
   start(succesfullAuthenticatedCallback = null) {
+    // Start authentication process
     this.manager.authenticate(succesfullAuthenticatedCallback);
   }
 
@@ -33,22 +40,25 @@ class Linksquared {
    * @param {Function} error - Error callback for creating the link.
    */
   createLink(title, subtitle, imageURL, data, success, error) {
+    // Delegate link creation to the manager
     this.manager.createLink(title, subtitle, imageURL, data, success, error);
   }
 
   /**
    * Retrieves the user identifier from the manager.
-   * @returns {string|null} The user identifier.
+   * @returns {string|null} The user identifier, or null if not set.
    */
   userIdentifier() {
+    // Get user identifier from the manager
     return this.manager.userIdentifier();
   }
 
   /**
    * Retrieves the user attributes from the manager.
-   * @returns {Object|null} The user attributes.
+   * @returns {Object|null} The user attributes, or null if not set.
    */
   userAttributes() {
+    // Get user attributes from the manager
     return this.manager.userAttributes();
   }
 
@@ -58,6 +68,7 @@ class Linksquared {
    * @returns {void}
    */
   setUserIdentifier(identifier) {
+    // Set user identifier through the manager
     this.manager.setUserIdentifier(identifier);
   }
 
@@ -67,26 +78,27 @@ class Linksquared {
    * @returns {void}
    */
   setUserAttributes(attributes) {
+    // Set user attributes through the manager
     this.manager.setUserAttributes(attributes);
   }
 
   /**
    * Checks if the SDK is authenticated.
-   *
-   * This method returns the authentication status of the SDK. It will return true if the
-   * SDK is currently authenticated, and false otherwise.
-   *
+   * This method returns the authentication status of the SDK.
    * @returns {boolean} - The authentication status of the manager.
    */
   authenticated() {
+    // Return the authentication status from the manager
     return this.manager.authenticated;
   }
+
   /**
    * Displays the messages list using the manager.
    * This method triggers the display of the messages list in the UI.
    * @returns {void}
    */
   showMessagesList() {
+    // Delegate message list display to the manager
     this.manager.showMessagesList();
   }
 
@@ -98,6 +110,7 @@ class Linksquared {
    * @returns {void}
    */
   getMessages(page, response, error) {
+    // Delegate message retrieval to the manager
     this.manager.getMessages(page, response, error);
   }
 
@@ -108,6 +121,7 @@ class Linksquared {
    * @returns {void}
    */
   getNumberOfUnreadMessages(response, error) {
+    // Delegate unread message count retrieval to the manager
     this.manager.getNumberOfUnreadMessages(response, error);
   }
 
@@ -116,16 +130,19 @@ class Linksquared {
    * @returns {Array} Array of all received data objects.
    */
   getAllReceivedData() {
+    // Return received data from the manager
     return this.manager.getAllReceivedData();
   }
 
   /**
-   * Marks a message as read
-   * @param {Message} message - The message to be marked as read
+   * Marks a message as read.
+   * @param {Object} message - The message to be marked as read.
    * @param {Function} response - Callback for success.
    * @param {Function} error - Callback for error.
+   * @returns {void}
    */
   markMessageAsRead(message, response, error) {
+    // Delegate marking message as read to the manager
     this.manager.markMessageAsRead(message, response, error);
   }
 }

@@ -11,17 +11,27 @@ class LinksquaredManager {
   /**
    * Creates an instance of LinksquaredManager.
    * @param {string} APIKey - The API key for authentication.
+   * @param {boolean} testEnvironment - Indicates if the environment is a test environment.
    * @param {Function} linkHandlingCallback - Callback function to handle Linksquared data.
    */
-  constructor(APIKey, linkHandlingCallback) {
+  constructor(APIKey, testEnvironment, linkHandlingCallback) {
+    // Set API key and environment in the context
     LinksquaredContext.API_KEY = APIKey;
+    LinksquaredContext.testEnvironment = testEnvironment;
 
+    // Initialize callback for handling links
     this.linkHandlingCallback = linkHandlingCallback;
+    // Initialize API service for making requests
     this.service = new LinksquaredAPIService();
+    // Initialize event manager for handling events
     this.eventsManager = new LinksquaredEventsManager();
+    // Authentication status
     this.authenticated = false;
+    // Flag to determine if identifiers need updating
     this.shouldUpdateIdentifiers = false;
+    // Initialize UI helper for UI interactions
     this.uiHelper = new LinksquaredUIHelper();
+    // Array to store received data
     this.receivedData = [];
   }
 
@@ -29,11 +39,13 @@ class LinksquaredManager {
 
   /**
    * Authenticates with the Linksquared API.
+   * @param {Function} succesfullAuthenticatedCallback - Callback function invoked upon successful authentication.
    */
   authenticate(succesfullAuthenticatedCallback) {
+    // Get the current device details
     let details = LinksquaredDeviceDetails.currentDetails();
 
-    const self = this;
+    const self = this; // Preserve context for callbacks
     this.service.authenticateDevice(
       details,
       /**
@@ -41,24 +53,31 @@ class LinksquaredManager {
        * @param {Object} response - The authentication response.
        */
       (response) => {
+        // Extract relevant data from response
         let linksquaredID = response.linksquared;
         let identifier = response.sdk_identifier;
         let attributes = response.sdk_attributes;
 
         console.log("authenticate response: ", response);
 
+        // Set Linksquared ID cookie for future use
         LinksquaredContext.setLinksquaredIDCookie(linksquaredID);
 
+        // Update context attributes only if identifiers are not being updated
         if (!self.shouldUpdateIdentifiers) {
           LinksquaredContext.USER_ATTRIBUTES = identifier;
           LinksquaredContext.USER_IDENTIFIER = attributes;
         }
 
+        // Mark as authenticated
         self.authenticated = true;
 
+        // Call the success callback if provided
         if (succesfullAuthenticatedCallback) {
           succesfullAuthenticatedCallback();
         }
+
+        // Handle data fetching and event flushing
         self.#handleFetchData();
         self.#updateUserAttributesIfNeeded();
         self.eventsManager.flushEvents();
@@ -81,6 +100,7 @@ class LinksquaredManager {
   setUserIdentifier(identifier) {
     LinksquaredContext.USER_IDENTIFIER = identifier;
 
+    // Mark for identifier update if not authenticated
     if (!this.authenticated) {
       this.shouldUpdateIdentifiers = true;
     }
@@ -95,6 +115,7 @@ class LinksquaredManager {
   setUserAttributes(attributes) {
     LinksquaredContext.USER_ATTRIBUTES = attributes;
 
+    // Mark for identifier update if not authenticated
     if (!this.authenticated) {
       this.shouldUpdateIdentifiers = true;
     }
@@ -128,6 +149,7 @@ class LinksquaredManager {
    * @param {Function} error - Error callback for creating the link.
    */
   createLink(title, subtitle, imageURL, data, success, error) {
+    // Check if authenticated before creating a link
     if (!this.authenticated) {
       error("The linksquared SDK is not yet initialized, try again later!");
     }
@@ -147,22 +169,37 @@ class LinksquaredManager {
           return;
         }
 
+        // Error handling for link creation
         error(
           "You must configure the redirect rules in the Web interface first"
         );
       },
-      error
+      error // Error callback for the service
     );
   }
 
+  /**
+   * Displays the messages list using the UI helper.
+   */
   showMessagesList() {
     this.uiHelper.showMessagesList();
   }
 
+  /**
+   * Retrieves messages for the device.
+   * @param {number} page - The page number for pagination.
+   * @param {Function} response - Success callback for retrieving messages.
+   * @param {Function} error - Error callback for retrieving messages.
+   */
   getMessages(page, response, error) {
     this.service.messagesForDevice(page, response, error);
   }
 
+  /**
+   * Retrieves the number of unread messages.
+   * @param {Function} response - Success callback for the number of unread messages.
+   * @param {Function} error - Error callback for retrieving the count.
+   */
   getNumberOfUnreadMessages(response, error) {
     this.service.numberOfUnreadMessages(response, error);
   }
@@ -175,12 +212,22 @@ class LinksquaredManager {
     return this.receivedData;
   }
 
+  /**
+   * Marks a message as read.
+   * @param {Object} message - The message to mark as read.
+   * @param {Function} response - Success callback for marking the message.
+   * @param {Function} error - Error callback for marking the message.
+   */
   markMessageAsRead(message, response, error) {
     this.service.markMessageAsViewed(message, response, error);
   }
 
   // MARK: Private
 
+  /**
+   * Displays automatic messages by fetching them from the service.
+   * @private
+   */
   #displayAutomaticMessages() {
     this.service.messagesForAutomaticDisplay(
       (response) => {
@@ -202,12 +249,14 @@ class LinksquaredManager {
    */
   #handleFetchData() {
     const linksquaredValue = LinksquaredDeviceDetails.getLinksquaredPath();
+    // Check if a specific path is set
     if (linksquaredValue) {
       this.#handleLinksquaredValue(linksquaredValue);
     } else {
       this.#handleDataForDevice();
     }
 
+    // Fetch automatic messages
     this.#displayAutomaticMessages();
   }
 
@@ -245,7 +294,7 @@ class LinksquaredManager {
    */
   #handleDataForDevice() {
     let details = LinksquaredDeviceDetails.currentDetails();
-    const self = this;
+    const self = this; // Preserve context for callbacks
 
     this.service.payloadForDevice(
       details,
@@ -273,23 +322,28 @@ class LinksquaredManager {
    */
   #handleDataReceived(data) {
     if (data) {
+      // Store received data and invoke callback
       this.receivedData.push(data);
       this.linkHandlingCallback(data);
     }
   }
 
+  /**
+   * Updates user attributes if authenticated.
+   * @private
+   */
   #updateUserAttributesIfNeeded() {
     if (!this.authenticated) {
-      return;
+      return; // Do nothing if not authenticated
     }
 
-    const self = this;
+    const self = this; // Preserve context for callbacks
     this.service.setUserAttributes(
       (response) => {
-        self.shouldUpdateIdentifiers = false;
+        self.shouldUpdateIdentifiers = false; // Reset update flag
       },
       /**
-       * Error callback for fetching data for the current device.
+       * Error callback for updating user attributes.
        * @param {Object} error - The error object.
        */
       (error) => {

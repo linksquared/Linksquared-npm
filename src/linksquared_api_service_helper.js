@@ -5,8 +5,8 @@ import LinksquaredContext from "./linksquared_context";
  */
 class LinksquaredAPIServiceHelper {
   // Endpoint URL for the Linksquared API
-  // static ENDPOINT = "https://sdk.sqd.link/api/v1/sdk";
-  static ENDPOINT = "http://sdk.lvh.me:3000/api/v1/sdk";
+  static ENDPOINT = "https://sdk.sqd.link/api/v1/sdk";
+  // static ENDPOINT = "http://sdk.lvh.me:3000/api/v1/sdk";
 
   /**
    * Constructor for LinksquaredAPIServiceHelper.
@@ -101,7 +101,11 @@ class LinksquaredAPIServiceHelper {
 
     // Add API key header
     if (LinksquaredContext.API_KEY) {
-      headers["PROJECT_KEY"] = LinksquaredContext.API_KEY;
+      if (LinksquaredContext.testEnvironment) {
+        headers["PROJECT_KEY"] = "test_" + LinksquaredContext.API_KEY;
+      } else {
+        headers["PROJECT_KEY"] = LinksquaredContext.API_KEY;
+      }
     }
 
     return headers;
