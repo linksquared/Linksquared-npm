@@ -22,6 +22,7 @@ class LinksquaredManager {
     this.authenticated = false;
     this.shouldUpdateIdentifiers = false;
     this.uiHelper = new LinksquaredUIHelper();
+    this.receivedData = [];
   }
 
   // MARK: Methods
@@ -43,6 +44,8 @@ class LinksquaredManager {
         let linksquaredID = response.linksquared;
         let identifier = response.sdk_identifier;
         let attributes = response.sdk_attributes;
+
+        console.log("authenticate response: ", response);
 
         LinksquaredContext.setLinksquaredIDCookie(linksquaredID);
 
@@ -164,6 +167,18 @@ class LinksquaredManager {
     this.service.numberOfUnreadMessages(response, error);
   }
 
+  /**
+   * Returns all the received data.
+   * @returns {Array} Array of all received data objects.
+   */
+  getAllReceivedData() {
+    return this.receivedData;
+  }
+
+  markMessageAsRead(message, response, error) {
+    this.service.markMessageAsViewed(message, response, error);
+  }
+
   // MARK: Private
 
   #displayAutomaticMessages() {
@@ -258,6 +273,7 @@ class LinksquaredManager {
    */
   #handleDataReceived(data) {
     if (data) {
+      this.receivedData.push(data);
       this.linkHandlingCallback(data);
     }
   }

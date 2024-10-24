@@ -110,6 +110,24 @@ class Linksquared {
   getNumberOfUnreadMessages(response, error) {
     this.manager.getNumberOfUnreadMessages(response, error);
   }
+
+  /**
+   * Returns all the received data since startup.
+   * @returns {Array} Array of all received data objects.
+   */
+  getAllReceivedData() {
+    return this.manager.getAllReceivedData();
+  }
+
+  /**
+   * Marks a message as read
+   * @param {Message} message - The message to be marked as read
+   * @param {Function} response - Callback for success.
+   * @param {Function} error - Callback for error.
+   */
+  markMessageAsRead(message, response, error) {
+    this.manager.markMessageAsRead(message, response, error);
+  }
 }
 
 export default Linksquared;
