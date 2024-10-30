@@ -272,7 +272,6 @@ class LinksquaredUIHelper {
         `;
     modalHeader.appendChild(closeButton);
     iframeModal.appendChild(modalHeader);
-    console.log("notification", notification);
     // Create iframe
     const iframe = document.createElement("iframe");
     iframe.src = notification.access_url;
@@ -313,7 +312,6 @@ class LinksquaredUIHelper {
       (response) => {
         spinner.style.display = "none";
         this.isLoading = false; // Reset loading state
-        console.log("messagesForDevice: ", response);
 
         if (this.page == 1) {
           const itemList = document.getElementById("itemList");

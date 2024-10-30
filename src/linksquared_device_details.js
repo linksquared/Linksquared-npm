@@ -58,14 +58,25 @@ class LinksquaredDeviceDetails {
    * @returns {string|null} - Value of the "linksquared" parameter, or null if not found.
    */
   static getLinksquaredPath() {
-    const url = window.location.href;
-    // Create a new URLSearchParams object with the URL string
-    const params = new URLSearchParams(url.split("?")[1]);
+    let urlWithoutFragment = window.location.href.split("#")[0];
 
-    // Get the value of the "linksquared" parameter
-    const linksquaredValue = params.get("linksquared");
+    // Remove the trailing slash if it exists
+    if (urlWithoutFragment.endsWith("/")) {
+      urlWithoutFragment = urlWithoutFragment.slice(0, -1);
+    }
 
-    return linksquaredValue;
+    // Create a URL object with the cleaned URL
+    const url = new URL(urlWithoutFragment);
+
+    // Use URLSearchParams to get the 'linksquared' parameter
+    const linksquaredValue = url.searchParams.get("linksquared");
+
+    // Decode the parameter value, if it exists
+    const decodedLinksquaredValue = linksquaredValue
+      ? decodeURIComponent(linksquaredValue)
+      : null;
+
+    return decodedLinksquaredValue;
   }
 }
 

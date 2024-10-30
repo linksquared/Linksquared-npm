@@ -58,8 +58,6 @@ class LinksquaredManager {
         let identifier = response.sdk_identifier;
         let attributes = response.sdk_attributes;
 
-        console.log("authenticate response: ", response);
-
         // Set Linksquared ID cookie for future use
         LinksquaredContext.setLinksquaredIDCookie(linksquaredID);
 
@@ -231,10 +229,11 @@ class LinksquaredManager {
   #displayAutomaticMessages() {
     this.service.messagesForAutomaticDisplay(
       (response) => {
-        const notifications = response.notifications;
-        notifications.forEach((item) => {
-          this.uiHelper.openPage(item);
-        });
+        // Disabled for now
+        // const notifications = response.notifications;
+        // notifications.forEach((item) => {
+        //   this.uiHelper.openPage(item);
+        // });
       },
       (error) => {
         console.log("Linksquared -- could not get automatic notifications!");
@@ -249,6 +248,10 @@ class LinksquaredManager {
    */
   #handleFetchData() {
     const linksquaredValue = LinksquaredDeviceDetails.getLinksquaredPath();
+    console.log(
+      "Linksquared - value extracted from the link",
+      linksquaredValue
+    );
     // Check if a specific path is set
     if (linksquaredValue) {
       this.#handleLinksquaredValue(linksquaredValue);
@@ -267,7 +270,6 @@ class LinksquaredManager {
    */
   #handleLinksquaredValue(path) {
     let details = LinksquaredDeviceDetails.currentDetails();
-
     this.service.payloadForDeviceAndPath(
       details,
       path,

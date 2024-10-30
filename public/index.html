@@ -17,19 +17,20 @@
 
     <script>
       const APIKey =
-        "emotii_70530f011b3e085ef845993963f41570824b9e7f7ad9dd2f76b295f1e9385f70";
+        "emotii_2fb260c812b350d41e4268f59362ad13f5c4a84011ded882973425c5a26a5026";
 
-      const sdk = new Linksquared.default(APIKey, (data) => {
+      const sdk = new Linksquared.default(APIKey, false, (data) => {
         console.log("Link data:", data); // Callback to handle data from Linksquared
       });
+      sdk.start();
 
       // Start the SDK
-      sdk.start(() => {
-        sdk.showMessagesList();
-      });
+      // sdk.start(() => {
+      //   sdk.showMessagesList();
+      // });
 
-      sdk.setUserIdentifier("YOUR_USER_ID");
-      sdk.setUserAttributes({ KEY: "VALUE" });
+      // sdk.setUserIdentifier("YOUR_USER_ID");
+      // sdk.setUserAttributes({ KEY: "VALUE" });
 
       function setUserDetails() {
         // sdk.getNumberOfUnreadMessages(
@@ -58,18 +59,18 @@
       //
 
       // // Create a test link
-      // sdk.createLink(
-      //   "Test Title",
-      //   "Test Subtitle",
-      //   "https://example.com/image.jpg",
-      //   { additionalData: "test" },
-      //   (successData) => {
-      //     console.log("Link created successfully:", successData);
-      //   },
-      //   (errorData) => {
-      //     console.error("Error creating link:", errorData);
-      //   }
-      // );
+      sdk.createLink(
+        "Test Title",
+        "Test Subtitle",
+        "https://example.com/image.jpg",
+        { invited_by: "test" },
+        (successData) => {
+          console.log("Link created successfully:", successData);
+        },
+        (errorData) => {
+          console.error("Error creating link:", errorData);
+        }
+      );
 
       // Set the user attributes
     </script>
