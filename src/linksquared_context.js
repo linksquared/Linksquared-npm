@@ -17,7 +17,7 @@ class LinksquaredContext {
   static testEnvironment = false;
 
   static get LINKSQUARED_ID() {
-    return LinksquaredDeviceDetails.getCookieValue("linksquared");
+    return LinksquaredDeviceDetails.getValue("linksquared");
   }
 
   /**
@@ -25,7 +25,7 @@ class LinksquaredContext {
    * @param {string} id - Linksquared ID to be stored in the cookie.
    */
   static setLinksquaredIDCookie(id) {
-    LinksquaredDeviceDetails.setCookie("linksquared", id);
+    LinksquaredDeviceDetails.setValue("linksquared", id);
   }
 
   /**
