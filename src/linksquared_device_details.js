@@ -1,6 +1,17 @@
 // Define the LinksquaredDeviceDetails class
 class LinksquaredDeviceDetails {
   /**
+   * Helper function to check if running in Electron.
+   * @returns {boolean} - True if in Electron, otherwise false.
+   */
+  static isElectron() {
+    return (
+      typeof navigator !== "undefined" &&
+      navigator.userAgent.includes("Electron")
+    );
+  }
+
+  /**
    * Get current device details.
    * @returns {Object} - Object containing user agent, app version, and build.
    */
@@ -18,39 +29,55 @@ class LinksquaredDeviceDetails {
   }
 
   /**
-   * Get the value of a cookie by name.
-   * @param {string} cookieName - Name of the cookie to retrieve.
-   * @returns {string|null} - Value of the cookie, or null if not found.
+   * Get the value of a cookie or local storage item by name.
+   * @param {string} name - Name of the item to retrieve.
+   * @returns {string|null} - Value of the item, or null if not found.
    */
-  static getCookieValue(cookieName) {
-    const cookies = document.cookie.split(";"); // Split cookies into an array
-    for (let cookie of cookies) {
-      const [name, value] = cookie.trim().split("="); // Split each cookie into name and value
-      if (name === cookieName) {
-        return decodeURIComponent(value); // Return the decoded cookie value
+  static getValue(name) {
+    if (this.isElectron()) {
+      return localStorage.getItem(name); // Use local storage in Electron
+    } else {
+      const cookies = document.cookie.split(";"); // Split cookies into an array
+      for (let cookie of cookies) {
+        const [key, value] = cookie.trim().split("="); // Split each cookie into name and value
+        if (key === name) {
+          return decodeURIComponent(value); // Return the decoded cookie value
+        }
       }
+      return null; // Return null if the item is not found
     }
-    return null; // Return null if the cookie is not found
   }
 
   /**
-   * Set a cookie with the given name and value.
-   * @param {string} cookieName - Name of the cookie to set.
-   * @param {string} cookieValue - Value to set for the cookie.
+   * Removes a cookie or local storage item by name.
+   * @param {string} name - Name of the item to remove.
    */
-  static setCookie(cookieName, cookieValue) {
-    // Set expiration date to a far-future date
-    const farFutureDate = new Date("9999-12-31");
-    const expires = "expires=" + farFutureDate.toUTCString();
+  static removeValue(name) {
+    if (this.isElectron()) {
+      localStorage.removeItem(name); // Remove item from local storage in Electron
+    } else {
+      // Set the cookie's expiration date to the past
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+    }
+  }
 
-    // Set the cookie
-    document.cookie =
-      cookieName +
-      "=" +
-      encodeURIComponent(cookieValue) +
-      ";" +
-      expires +
-      ";path=/";
+  /**
+   * Set a cookie or local storage item with the given name and value.
+   * @param {string} name - Name of the item to set.
+   * @param {string} value - Value to set for the item.
+   */
+  static setValue(name, value) {
+    if (this.isElectron()) {
+      localStorage.setItem(name, value); // Set value in local storage in Electron
+    } else {
+      // Set expiration date to a far-future date
+      const farFutureDate = new Date("9999-12-31");
+      const expires = "expires=" + farFutureDate.toUTCString();
+
+      // Set the cookie
+      document.cookie =
+        name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/";
+    }
   }
 
   /**
@@ -76,7 +103,17 @@ class LinksquaredDeviceDetails {
       ? decodeURIComponent(linksquaredValue)
       : null;
 
-    return decodedLinksquaredValue;
+    if (decodedLinksquaredValue != null) {
+      this.setValue("linksquared_path", decodedLinksquaredValue);
+
+      return decodedLinksquaredValue;
+    } else {
+      // Return it only once
+      const value = this.getValue("linksquared_path");
+      this.removeValue("linksquared_path");
+
+      return value;
+    }
   }
 }
 

@@ -80,8 +80,6 @@ class LinksquaredAPIService {
     if (imageUrl) dataToSend.image_url = imageUrl;
     if (data) dataToSend.data = JSON.stringify(data);
 
-    console.log("dataToSend ", dataToSend);
-
     this.apiService.POST(
       LinksquaredAPIService.ENDPOINTS.CREATE_LINK,
       dataToSend,
